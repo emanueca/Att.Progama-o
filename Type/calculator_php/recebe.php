@@ -10,8 +10,19 @@ $op     = $_POST['op'] ?? '';
 if (empty($n1_raw) || empty($n2_raw) || empty($op)) {
     $erro = "Requisição inválida. Preencha todos os campos do formulário.";
 } else {
-    $n1_str_normalizada = str_replace(',', '.', str_replace('.', '', $n1_raw));
-    $n2_str_normalizada = str_replace(',', '.', str_replace('.', '', $n2_raw));
+    // Função auxiliar para normalizar números
+    function normalizar_numero($valor) {
+        // Se tiver vírgula, assume formato BR (ex: 1.000,50)
+        // Remove ponto de milhar e troca vírgula por ponto
+        if (strpos($valor, ',') !== false) {
+            return str_replace(',', '.', str_replace('.', '', $valor));
+        }
+        // Se não tiver vírgula, assume formato US (ex: 1000.50) ou inteiro
+        return $valor;
+    }
+
+    $n1_str_normalizada = normalizar_numero($n1_raw);
+    $n2_str_normalizada = normalizar_numero($n2_raw);
 
     if (!is_numeric($n1_str_normalizada) || !is_numeric($n2_str_normalizada)) {
         $erro = "Entrada inválida. Use apenas números (ex.: 12.5 ou 12,5).";
